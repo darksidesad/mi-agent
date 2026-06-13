@@ -179,13 +179,3 @@ pytest tests/e2e/ -v           # 7 tests end-to-end
 | `MAX_LOOP_ITERATIONS` | Máximo de ciclos de crítica | `5` |
 | `QUALITY_THRESHOLD` | Score mínimo para entregar | `8.0` |
 
-## 👨‍💻 Autor
-
-**[Tu Nombre]** — AI/ML Engineer
-
-- LinkedIn: [tu-linkedin](https://linkedin.com/in/tu-perfil)
-- GitHub: [@darksidesad](https://github.com/darksidesad)
-
----
-
-*Construido con LangGraph, Tavily, Qdrant, OpenRouter y Streamlit*
