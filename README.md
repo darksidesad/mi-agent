@@ -19,6 +19,7 @@ Este sistema recibe una query de investigación (ej: "análisis de mercado finte
 - **Proyecciones** — Forecasting basado en datos
 - **Recomendaciones** — Próximos pasos accionables
 - **Atribución de Fuentes** — Cada afirmación vinculada a una fuente verificada
+![Guia Ilustrada](c5291573-ddfb-4600-a274-9065a4cc6ad4.jpg)
 
 El sistema critica y refina iterativamente su propio output hasta alcanzar un score de calidad ≥ 8/10.
 
