@@ -1,6 +1,6 @@
 # 🧠 Intelligence Brief Generator
 
-> Multi-agent AI system that generates executive-level intelligence briefs by combining real-time web research with historical vector context, using iterative self-critique for quality refinement.
+> Sistema multi-agente de inteligencia artificial que genera briefs ejecutivos estratégicos combinando investigación web en tiempo real con contexto histórico vectorial, utilizando auto-crítica iterativa para refinamiento de calidad.
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://python.org)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2.74-1C3C3C.svg?style=flat)](https://langchain-ai.github.io/langgraph/)
@@ -8,175 +8,176 @@
 [![Tests](https://img.shields.io/badge/Tests-35%20passing-brightgreen.svg?style=flat)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 What It Does
+## 🎯 Qué hace
 
-This system takes a research query (e.g., "fintech market analysis LATAM") and produces a structured intelligence brief with:
+Este sistema recibe una query de investigación (ej: "análisis de mercado fintech LATAM") y genera un intelligence brief estructurado con:
 
-- **Executive Summary** — Key findings in 2-3 paragraphs
-- **Dimension Analysis** — Deep dive into market trends, competition, regulation, technology, and risks
-- **Projections** — Data-backed trend forecasting
-- **Recommendations** — Actionable next steps
-- **Source Attribution** — Every claim linked to a verified source
+- **Executive Summary** — Hallazgos clave en 2-3 párrafos
+- **Análisis por Dimensión** — Deep dive en tendencias, competencia, regulación, tecnología y riesgos
+- **Proyecciones** — Forecasting basado en datos
+- **Recomendaciones** — Próximos pasos accionables
+- **Atribución de Fuentes** — Cada afirmación vinculada a una fuente verificada
 
-The system iteratively critiques and refines its own output up to 5 times until quality score ≥ 8/10.
+El sistema critica y refina iterativamente su propio output hasta alcanzar un score de calidad ≥ 8/10.
 
-## 🏗️ Architecture
+## 🏗️ Arquitectura
 
 ```
-User Query
+Query del Usuario
     │
     ▼
 ┌─────────────────────────────────────────────┐
 │           ORCHESTRATOR (LangGraph)          │
-│  StateGraph with conditional loop edges     │
+│  StateGraph con edges condicionales         │
 └──────┬──────────────┬──────────────┬────────┘
        │              │              │
        ▼              ▼              ▼
 ┌─────────────┐ ┌───────────┐ ┌─────────────┐
 │   Tavily    │ │  Qdrant   │ │  OpenRouter │
-│ Web Search  │ │ Vector DB │ │   LLM API   │
-│ (real-time) │ │(historical│ │ (推理+生成) │
+│ Búsqueda    │ │ Vector DB │ │  Gateway    │
+│ Web (tiempo │ │(contexto  │ │   LLM      │
+│  real)      │ │histórico) │ │             │
 └─────────────┘ └───────────┘ └─────────────┘
        │              │              │
        └──────┬───────┴──────┬───────┘
               ▼              ▼
        ┌─────────────┐ ┌──────────┐
-       │  Synthesize  │ │ Critique │◄── Loop
-       │  (generate)  │ │(validate)│    (max 5x)
+       │  Sintetizar  │ │ Criticar │◄── Loop
+       │  (generar)   │ │(validar) │    (máx 5x)
        └─────────────┘ └──────────┘
               │
               ▼
      Intelligence Brief
 ```
 
-## 🛠️ Tech Stack
+## 🛠️ Stack Técnico
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Orchestration** | LangGraph | Agent workflow with StateGraph, nodes, and conditional edges |
-| **Web Research** | Tavily API | Real-time news search (last 72h) with rate limiting |
-| **Vector Database** | Qdrant | Semantic search for historical research context |
-| **LLM Gateway** | OpenRouter | Multi-model access with automatic fallback |
-| **Frontend** | Streamlit | Interactive UI with 3 tabs |
-| **Testing** | pytest | 35 tests (unit, integration, e2e) |
-| **Containerization** | Docker | Production-ready deployment |
+| Capa | Tecnología | Propósito |
+|------|-----------|-----------|
+| **Orquestación** | LangGraph | Workflow de agentes con StateGraph, nodos y edges condicionales |
+| **Investigación Web** | Tavily API | Búsqueda de noticias en tiempo real (últimas 72h) con rate limiting |
+| **Base de Datos Vectorial** | Qdrant | Búsqueda semántica para contexto histórico de investigaciones |
+| **Gateway LLM** | OpenRouter | Acceso multi-modelo con fallback automático |
+| **Frontend** | Streamlit | UI interactiva con 3 pestañas |
+| **Testing** | pytest | 35 tests (unit, integración, e2e) |
+| **Containerización** | Docker | Deployment listo para producción |
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
 
 ```
 intelligence-brief-agent/
-├── app.py                          # Streamlit UI (3 tabs)
+├── app.py                          # Streamlit UI (3 pestañas)
 ├── scripts/
-│   ├── main.py                     # CLI entry point
+│   ├── main.py                     # Entry point CLI
 │   ├── agents/
-│   │   ├── orchestrator.py         # Pipeline controller
-│   │   ├── researcher.py           # Tavily + Qdrant search
-│   │   └── synthesizer.py          # LLM report generation
+│   │   ├── orchestrator.py         # Controlador del pipeline
+│   │   ├── researcher.py           # Búsqueda Tavily + Qdrant
+│   │   └── synthesizer.py          # Generación de reportes con LLM
 │   ├── tools/
-│   │   ├── tavily_tool.py          # Web search with retry + rate limit
-│   │   ├── qdrant_tool.py          # Vector DB with cosine similarity
-│   │   └── openrouter_tool.py      # Multi-model LLM with fallback
+│   │   ├── tavily_tool.py          # Búsqueda web con retry + rate limit
+│   │   ├── qdrant_tool.py          # Vector DB con cosine similarity
+│   │   └── openrouter_tool.py      # LLM multi-modelo con fallback
 │   ├── graph/
-│   │   ├── state.py                # TypedDict state definition
-│   │   └── workflow.py             # LangGraph StateGraph
+│   │   ├── state.py                # Definición de estado TypedDict
+│   │   └── workflow.py             # StateGraph de LangGraph
 │   └── loops/
-│       ├── self_critique.py        # Auto-critique logic
-│       └── iteration_manager.py    # Loop control (max 5, timeout)
+│       ├── self_critique.py        # Lógica de auto-crítica
+│       └── iteration_manager.py    # Control del loop (máx 5, timeout)
 ├── tests/
-│   ├── unit/                       # Tool tests (Tavily, Qdrant, OpenRouter)
-│   ├── integration/                # Workflow tests
-│   └── e2e/                        # Full pipeline tests
-├── docs/                           # PRD, DOD, Architecture
-├── .opencode/                      # Agent + skill definitions
+│   ├── unit/                       # Tests de herramientas
+│   ├── integration/                # Tests del workflow
+│   └── e2e/                        # Tests del pipeline completo
+├── docs/                           # PRD, DOD, Arquitectura
+├── .opencode/                      # Definiciones de agentes + skills
 ├── requirements.txt
 ├── Dockerfile
 └── docker-compose.yml
 ```
 
-## 🔄 Pipeline Flow
+## 🔁 Flujo del Pipeline
 
 ```
-1. DECOMPOSE    → Product Owner breaks query into 5 analysis dimensions
-2. RESEARCH     → Tavily (web) + Qdrant (history) run in parallel
-3. SYNTHESIZE   → LLM generates initial 4000-7000 word brief
+1. DESCOMPONER    → Product Owner descompone la query en 5 dimensiones de análisis
+2. INVESTIGAR     → Tavily (web) + Qdrant (historial) ejecutan en paralelo
+3. SINTETIZAR     → LLM genera borrador inicial de 4000-7000 palabras
 4. LOOP ENGINEERING:
-   a. CRITIQUE  → LLM identifies weaknesses, biases, gaps
-   b. REFINE    → LLM rewrites fixing identified issues
-   c. VALIDATE  → Score 0-10; if ≥8 → deliver, else → loop back
-5. STORE        → Save brief + sources to Qdrant for future queries
-6. DELIVER      → Display in Streamlit + download as Markdown
+   a. CRITICAR    → LLM identifica debilidades, sesgos y gaps
+   b. REFINAR     → LLM reescribe corrigiendo los problemas detectados
+   c. VALIDAR     → Score 0-10; si ≥8 → entregar, si no → volver al paso a
+5. ALMACENAR      → Guardar brief + fuentes en Qdrant para futuras queries
+6. ENTREGAR       → Mostrar en Streamlit + descargar como Markdown
 ```
 
-## 🚀 Getting Started
+## 🚀 Inicio Rápido
 
 ```bash
-# Clone
+# Clonar
 git clone https://github.com/darksidesad/mi-agent.git
 cd mi-agent
 
-# Virtual environment
+# Entorno virtual
 python -m venv venv
 venv\Scripts\activate        # Windows
 source venv/bin/activate     # Mac/Linux
 
-# Install dependencies
+# Instalar dependencias
 pip install -r requirements.txt
 
-# Configure
+# Configurar
 cp .env.example .env
-# Add your API keys to .env
+# Agregar tus API keys en .env
 
-# Run CLI
-python scripts/main.py "your research query"
+# Ejecutar CLI
+python scripts/main.py "tu query de investigación"
 
-# Run Streamlit UI
+# Ejecutar UI Streamlit
 streamlit run app.py
 ```
 
-## ⚡ Key Features
+## ⚡ Características Principales
 
-- **Parallel Research** — Tavily + Qdrant execute simultaneously via `asyncio.gather()`
-- **Loop Engineering** — Self-critique and refinement cycle (max 5 iterations)
-- **Rate Limit Handling** — Exponential backoff retry (10s → 20s → 40s → 80s)
-- **Historical Context** — Each research saves to Qdrant; future queries benefit from past findings
-- **Multi-model Fallback** — Automatic model switching on failure
-- **Real-time UI** — Step-by-step pipeline progress in Streamlit
-- **Chat with History** — Ask questions about past research stored in Qdrant
+- **Investigación Paralela** — Tavily + Qdrant ejecutan simultáneamente con `asyncio.gather()`
+- **Loop Engineering** — Ciclo de auto-crítica y refinamiento (máximo 5 iteraciones)
+- **Manejo de Rate Limits** — Retry con backoff exponencial (10s → 20s → 40s → 80s)
+- **Contexto Histórico** — Cada investigación se guarda en Qdrant; futuras queries aprovechan hallazgos previos
+- **Fallback Multi-modelo** — Cambio automático de modelo ante fallos
+- **UI en Tiempo Real** — Progreso paso a paso del pipeline en Streamlit
+- **Chat con Historial** — Preguntar sobre investigaciones pasadas almacenadas en Qdrant
 
 ## 🧪 Testing
 
 ```bash
-# Run all tests
+# Ejecutar todos los tests
 pytest tests/ -v
 
-# Run specific suite
-pytest tests/unit/ -v          # 25 unit tests
-pytest tests/integration/ -v   # 3 integration tests
-pytest tests/e2e/ -v           # 7 e2e tests
+# Suite específica
+pytest tests/unit/ -v          # 25 tests unitarios
+pytest tests/integration/ -v   # 3 tests de integración
+pytest tests/e2e/ -v           # 7 tests end-to-end
 ```
 
-## 📊 Metrics
+## 📊 Métricas
 
-| Metric | Value |
-|--------|-------|
-| Test Coverage | 35/35 passing |
-| Avg. Pipeline Time | ~90-150s (model dependent) |
-| Tavily Free Tier | 1000 requests/month |
-| LLM Cost | $0 (free tier models) |
-| Max Brief Length | 7000+ words |
+| Métrica | Valor |
+|---------|-------|
+| Test Coverage | 35/35 pasando |
+| Tiempo Promedio Pipeline | ~90-150s (depende del modelo) |
+| Tavily Free Tier | 1000 requests/mes |
+| Costo LLM | $0 (modelos gratuitos) |
+| Longitud Máxima Brief | 7000+ palabras |
 
-## 🔧 Configuration
+## 🔧 Configuración
 
-| Variable | Description | Default |
+| Variable | Descripción | Default |
 |----------|-------------|---------|
-| `TAVILY_API_KEY` | Tavily search API key | — |
-| `OPENROUTER_API_KEY` | OpenRouter LLM API key | — |
-| `OPENROUTER_MODEL` | Primary model | `nex-agi/nex-n2-pro:free` |
-| `QDRANT_URL` | Qdrant instance URL | `http://localhost:6333` |
-| `MAX_LOOP_ITERATIONS` | Max critique cycles | `5` |
-| `QUALITY_THRESHOLD` | Min score to deliver | `8.0` |
+| `TAVILY_API_KEY` | API key de Tavily Search | — |
+| `OPENROUTER_API_KEY` | API key de OpenRouter LLM | — |
+| `OPENROUTER_MODEL` | Modelo principal | `nex-agi/nex-n2-pro:free` |
+| `QDRANT_URL` | URL de instancia Qdrant | `http://localhost:6333` |
+| `MAX_LOOP_ITERATIONS` | Máximo de ciclos de crítica | `5` |
+| `QUALITY_THRESHOLD` | Score mínimo para entregar | `8.0` |
 
-## 👨‍💻 Author
+## 👨‍💻 Autor
 
 **[Tu Nombre]** — AI/ML Engineer
 
@@ -185,4 +186,4 @@ pytest tests/e2e/ -v           # 7 e2e tests
 
 ---
 
-*Built with LangGraph, Tavily, Qdrant, OpenRouter, and Streamlit*
+*Construido con LangGraph, Tavily, Qdrant, OpenRouter y Streamlit*
