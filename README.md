@@ -8,6 +8,8 @@
 [![Tests](https://img.shields.io/badge/Tests-35%20passing-brightgreen.svg?style=flat)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Demo del Intelligence Brief Generator](0613.gif)
+
 ## 🎯 Qué hace
 
 Este sistema recibe una query de investigación (ej: "análisis de mercado fintech LATAM") y genera un intelligence brief estructurado con:
