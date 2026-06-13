@@ -1,0 +1,39 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "agent": {
+    "orchestrator": {
+      "description": "Controlador principal del pipeline de inteligencia",
+      "mode": "primary",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    },
+    "product-owner": {
+      "description": "Descompone queries en dimensiones de análisis",
+      "mode": "subagent",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    },
+    "architect": {
+      "description": "Diseña el grafo LangGraph y estrategias",
+      "mode": "subagent",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    },
+    "developer": {
+      "description": "Implementa el pipeline en código Python",
+      "mode": "subagent",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    },
+    "devops": {
+      "description": "Gestiona infraestructura y secrets",
+      "mode": "subagent",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    },
+    "qa": {
+      "description": "Valida factualidad y calidad del reporte",
+      "mode": "subagent",
+      "model": "openrouter/anthropic/claude-sonnet-4-20250514"
+    }
+  },
+  "skills": {
+    "paths": [".opencode/skills"]
+  }
+}
